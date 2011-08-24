@@ -27,6 +27,7 @@ Ext.define('uCall.controllers.AgentStatusController', {
 
         var data = {
             agent: currentUser.agentId,
+            queue: configVoip.queue,
             type: 'agent_status'
         };
 

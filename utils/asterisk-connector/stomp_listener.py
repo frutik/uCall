@@ -17,37 +17,37 @@ logging.basicConfig(level=logging.DEBUG,
                     filename='/tmp/ucall-pbx-listener.log',
                     filemode='a+')
 
-def queue_add(manager, agent):
+def queue_add(manager, request):
     cdict = {'Action':'QueueAdd'}
-    cdict['Interface'] = agent
-    cdict['Queue'] = 'test'
+    cdict['Interface'] = request['agent']
+    cdict['Queue'] = request['queue']
     cdict['Penalty'] = 1
     cdict['Paused'] = False
 
     return manager.send_action(cdict)
 
-def queue_remove(manager, agent):
+def queue_remove(manager, request):
     cdict = {'Action':'QueueRemove'}
-    cdict['Interface'] = agent
-    cdict['Queue'] = 'test'
+    cdict['Interface'] = request['agent']
+    cdict['Queue'] = request['queue']
 
     return manager.send_action(cdict)
 
-def queue_pause(manager, agent, paused = True):
+def queue_pause(manager, request, paused = True):
     cdict = {'Action':'QueuePause'}
-    cdict['Interface'] = agent
-    cdict['Queue'] = 'test'
+    cdict['Interface'] = request['agent']
+    cdict['Queue'] = request['queue']
     cdict['Paused'] = paused
 
     return manager.send_action(cdict)
 
-def queue_unpause(manager, agent):
-    return queue_pause(manager, agent, False)
+def queue_unpause(manager, request):
+    return queue_pause(manager, request, False)
 
-def queue_status(manager, agent):
+def queue_status(manager, request):
     cdict = {'Action':'QueueStatus'}
-    cdict['Queue'] = 'test'
-    cdict['Member'] = agent
+    cdict['Queue'] = request['queue']
+    cdict['Member'] = request['agent']
 
     return manager.send_action(cdict)
 
@@ -102,11 +102,11 @@ while True:
         manager.login(ami_username, ami_password)
 
         if data['statusId'] == 'available':
-            response = queue_add(manager, data['agent'])
+            response = queue_add(manager, data)
         elif data['statusId'] == 'offline':
-            response = queue_remove(manager, data['agent'])
+            response = queue_remove(manager, data)
         elif data['statusId'] == 'away':
-            response = queue_pause(manager, data['agent'])
+            response = queue_pause(manager, data)
 
         print response.headers['Message']
 
@@ -114,6 +114,7 @@ while True:
 
     elif data['type'] == channel_message.TYPE_PING:
 	#logging.info('ping at %s from %s', (data['id'], data['agent']))
+	#TODO hardcoded value
 	stomp.put('{"type":"pong"}', destination="jms.queue.msg." + str(data['agent']), persistent=False, conf={})
 
     elif data['type'] == channel_message.TYPE_CHECK_CURRENT_STATUS:
@@ -121,7 +122,7 @@ while True:
         manager.connect(ami_host)
         manager.login(ami_username, ami_password)
 
-        response = queue_status(manager, data['agent'])
+        response = queue_status(manager, data)
 
         print response.headers
 
