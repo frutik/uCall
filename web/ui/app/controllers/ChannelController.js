@@ -101,12 +101,12 @@ Ext.define('uCall.controllers.ChannelController', {
 
         // Stomp client adapter factory
         this.stompClientAdapterFactory = Ext.create('uCall.data.stomp.StompClientAdapterFactory', {
-            url: window.controlChannel.ws_url,
-            login: window.controlChannel.username,
-            passcode: window.controlChannel.password,
+            url: window.configStomp.ws_url,
+            login: window.configStomp.username,
+            passcode: window.configStomp.password,
 
-            agentChannel: controlChannel.agent_channel + window.currentUser.agentId,
-            ctrlChannel: controlChannel.ctrl_channel,
+            agentChannel: configStomp.agent_channel + window.currentUser.agentId,
+            ctrlChannel: configStomp.ctrl_channel,
 
             pingMessage: {'type': 'ping', 'agent': window.currentUser.agentId},
 

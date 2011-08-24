@@ -18,7 +18,7 @@ Ext.define('uCall.widgets.MainTopToolbar', {
         id: 'MainTopToolbar',
         items: [
             {xtype: 'ChannelStatusIndicator'},
-            'uCall UI',
+            configApp.name,
             '->',
             {xtype: 'UserStatusMenuButton'},
             '-',

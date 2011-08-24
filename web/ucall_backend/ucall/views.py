@@ -12,7 +12,19 @@ def main(request):
 def config_stomp(request):
     config = Config.objects.filter(section=u"stomp")
     #TODO is it possible to gzip/cache???
-    return render_to_response('config/stomp.json', {'config': config}, mimetype = 'text/javascript')
+    return render_to_response('config/config.json', {'section': 'Stomp', 'config': config}, mimetype = 'text/javascript')
+
+@login_required()
+def config_app(request):
+    config = Config.objects.filter(section=u"app")
+    #TODO is it possible to gzip/cache???
+    return render_to_response('config/config.json', {'section': 'App', 'config': config}, mimetype = 'text/javascript')
+
+@login_required()
+def config_voip(request):
+    config = Config.objects.filter(section=u"voip")
+    #TODO is it possible to gzip/cache???
+    return render_to_response('config/config.json', {'section': 'Voip', 'config': config}, mimetype = 'text/javascript')
 
 @login_required()
 def config_current_user(request):

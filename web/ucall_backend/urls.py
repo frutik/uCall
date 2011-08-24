@@ -24,6 +24,8 @@ urlpatterns = patterns('',
     url(r'^config/current_user/', 'ucall.views.config_current_user', name="config_current_user"),
     url(r'^config/channel_event_schema/', 'ucall.views.config_channel_event_schema', name="config_channel_event_schema"),
     url(r'^config/urls/', 'ucall.views.config_urls', name="config_urls"),
+    url(r'^config/app/', 'ucall.views.config_app', name="config_app"),
+    url(r'^config/voip/', 'ucall.views.config_voip', name="config_voip"),
 
     # include formunculous urls
     (r'^func/', include('formunculous.urls')),

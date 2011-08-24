@@ -5,6 +5,8 @@ class Config(models.Model):
         (u'general', u'general'),
         (u'stomp', u'stomp'),
         (u'ami', u'ami'),
+        (u'voip', u'voip'),
+        (u'app', u'app'),
     )
 
     section = models.CharField(max_length=255, choices=CONFIG_SECTIONS)

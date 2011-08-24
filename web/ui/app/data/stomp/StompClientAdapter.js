@@ -25,7 +25,7 @@ Ext.define('uCall.data.stomp.StompClientAdapter', {
         },
         
         //TODO inject it 
-        keepAliveInterval : controlChannel.ping_timeout,
+        keepAliveInterval : configStomp.ping_timeout,
 
         // 3rd party adapter
         client: null,
