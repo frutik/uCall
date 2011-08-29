@@ -50,6 +50,8 @@ print '='*80
 stomp = Client(stomp_host)
 stomp.connect(stomp_username, stomp_password)
 
+stomp.agent_channel = 'jms.queue.msg.'
+
 connection = connectionForURI(sql_dsn)
 sqlhub.processConnection = connection
 
@@ -67,6 +69,10 @@ else:
     sys.exit()
 
 command_handler = CommandHandlerFactory(asteriskProtocolVersion).create_command_handler()
+
+print '='*80
+print 'Using protocol handler:', command_handler
+print '='*80
 
 callbacks = {
     'Dial': command_handler.handle_Dial,

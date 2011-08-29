@@ -1,13 +1,16 @@
 def send_message(stomp, message, agent):
+
+    destination = stomp.agent_channel + agent
+
     print '='*80
-    print 'Agent:', agent 
+    print 'Channel:', destination 
     print 'Message:', message 
     print '='*80
 
     conf = {}
     #TODO: add message expiration
     #conf={"expires":(int(time()) + int(connect(config.get('GENERAL', 'message_ttl'))) * 1000}  
-    stomp.put(message, destination=stomp.agent_channel + agent, persistent=False, conf=conf)
+    stomp.put(message, destination=destination, persistent=False, conf=conf)
 
 def get_local_number(channel):
     return channel.split('-')[0]
