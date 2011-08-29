@@ -22,10 +22,11 @@ Ext.define('uCall.controllers.GrowlController', {
             },
             this
         );
+
         uCall.controllers.MessageController.on(
             uCall.constants.MessageEvent.INCOMING_CALL_HANGUP,
-            function(id) {
-                this.remove(id);
+            function(message) {
+                this.remove(message.i);
             },
             this
         );
@@ -93,6 +94,7 @@ Ext.define('uCall.controllers.GrowlController', {
     
     remove: function(id) {
         if (this.messages[id]) {
+	    console.log('Removing growl #' + id);
             this.messages[id].fireEvent('close')
         }
     },

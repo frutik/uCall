@@ -17,7 +17,7 @@ Ext.define('uCall.controllers.ApplicationWindowController', {
     
     onShow: function(message){
 
-        alert('!!');
+	console.log('++++++++++++++++++++++++++++++++++++++++++++');
 
         uCall.model.ApplicationDefinition.load(message.e, {
             scope: this,
@@ -101,12 +101,16 @@ Ext.define('uCall.controllers.ApplicationWindowController', {
     },
     
     constructor: function(config) {
+
+	console.log('Starting Applocation Window Controller');
         // Parent
         this.callParent(arguments);
         
         // Merge configs
         Ext.apply(this.config, config);
         Ext.apply(this, this.config);
+
+	console.log('Binding ' + uCall.constants.MessageEvent.INCOMING_CALL_LINK);
 
         this.on(uCall.constants.MessageEvent.INCOMING_CALL_LINK, this.onShow, this);
     }

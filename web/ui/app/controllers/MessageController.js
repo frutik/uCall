@@ -45,7 +45,8 @@ Ext.define('uCall.controllers.MessageController', {
 
             default:
                 if (this.eventsMap[message.t]) {
-                    this.fireEvent(this.eventsMap[message.t], message);
+                    result = this.fireEvent(this.eventsMap[message.t], message);
+            	    console.log('Fired event ' + this.eventsMap[message.t] + ' - ' + result);
                 }
         }
     },
