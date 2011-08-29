@@ -25,29 +25,47 @@ Ext.define('uCall.controllers.MessageController', {
         switch(message.t){
             
             case this.mappedEvents.EVENT_RINGING:
-	    	    that = this;
+		that = this;
 
-                UserInfo.getUserInfo(message.c, message.e, function(value) {
+                UserInfo.getUserInfo(message.c, message.e, function(crm_user_details) {
 
-                    if (value.success) {
-					    content = 'User ' + value.user + ' is waiting ... <br> Notes: ' + value.title;
-					} else {
-                        content = value.msg;
-					}
+                    if (crm_user_details.success) {
+			message.content = 'User ' + crm_user_details.user + ' is waiting ... <br> Notes: ' + crm_user_details.title;
+		    } else {
+			message.content = 'User ' + message.c + ' is waiting ...';
+                	//message.content = value.msg;
+		    }
 
-                    that.fireEvent(
-                       uCall.constants.MessageEvent.INCOMING_CALL_RINGING,
-                       message.i,
-                       content
-                    );
-		        });
+		    that.fireMappedEvent(message);
+		});
+
+                break;
+
+            case this.mappedEvents.EVENT_LINK:
+
+		this.fireMappedEvent(message); // show dialog
+		this.fireMappedEvent(message, this.mappedEvents.EVENT_HANGUP_CLEANUP); // hide growl
+
                 break;
 
             default:
-                if (this.eventsMap[message.t]) {
-                    result = this.fireEvent(this.eventsMap[message.t], message);
-            	    console.log('Fired event ' + this.eventsMap[message.t] + ' - ' + result);
-                }
+		this.fireMappedEvent(message);
+        }
+    },
+
+    fireMappedEvent: function(message, override_event_type) {
+	
+	if (override_event_type) {
+	    event_type = override_event_type;
+	} else {
+	    event_type = message.t;
+	}
+	
+	event = this.eventsMap[event_type];
+
+	if (event) {
+    	    result = this.fireEvent(event, message);
+    	    console.log('Fired event ' + event + ' - ' + result);
         }
     },
 
@@ -60,6 +78,9 @@ Ext.define('uCall.controllers.MessageController', {
         this.callParent(arguments);
 
         this.eventsMap = {};
+
+        this.eventsMap[this.mappedEvents.EVENT_RINGING] =
+            uCall.constants.MessageEvent.INCOMING_CALL_RINGING;
 
         this.eventsMap[this.mappedEvents.EVENT_HANGUP_CLEANUP] =
             uCall.constants.MessageEvent.INCOMING_CALL_HANGUP;

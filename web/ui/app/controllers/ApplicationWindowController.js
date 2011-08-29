@@ -17,8 +17,6 @@ Ext.define('uCall.controllers.ApplicationWindowController', {
     
     onShow: function(message){
 
-	console.log('++++++++++++++++++++++++++++++++++++++++++++');
-
         uCall.model.ApplicationDefinition.load(message.e, {
             scope: this,
             failure: function(record, operation) {
@@ -112,6 +110,12 @@ Ext.define('uCall.controllers.ApplicationWindowController', {
 
 	console.log('Binding ' + uCall.constants.MessageEvent.INCOMING_CALL_LINK);
 
-        this.on(uCall.constants.MessageEvent.INCOMING_CALL_LINK, this.onShow, this);
+	uCall.controllers.MessageController.on(
+    	    uCall.constants.MessageEvent.INCOMING_CALL_LINK, 
+    	    function(message) {
+    	        this.onShow(message);
+    	    }, 
+    	    this
+    	);
     }
 });

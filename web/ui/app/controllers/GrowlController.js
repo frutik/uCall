@@ -14,10 +14,10 @@ Ext.define('uCall.controllers.GrowlController', {
         
         uCall.controllers.MessageController.on(
             uCall.constants.MessageEvent.INCOMING_CALL_RINGING,
-            function(id, message) {
-                this.add(id, [ {
+            function(message) {
+                this.add(message.i, [ {
                     xtype: 'component',
-                    html: message
+                    html: message.content
                 }]);
             },
             this
