@@ -23,7 +23,7 @@
     </copy>
     <delete dir="build"/>
 </target>
-<target name="update_submodules">
+<target name="prepare_sources">
     <exec executable="git">
 	<arg value="submodule"/>
         <arg value="init"/>
@@ -32,5 +32,16 @@
 	<arg value="submodule"/>
         <arg value="update"/>
     </exec>
+    <exec executable="python">
+	<arg value="web/ucall_backend/manage.py"/>
+        <arg value="collectstatic"/>
+        <arg value="--noinput"/>
+    </exec>
+</target>
+<target name="prepare_archive">
+    <delete file="/tmp/ucall.zip"/>
+    <zip destfile="/tmp/ucall.zip"
+	basedir="."
+	excludes="src/** *.properties **/*.pyc **/.git **/.git/** **/.gitattributes **/.gitignore **/.gitmodules **.git/**" />
 </target>
 </project>     
