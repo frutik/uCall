@@ -1,0 +1,3 @@
+django
+psycopg2
+-e git+git://github.com/al-the-x/pyst.git#egg=asterisk
