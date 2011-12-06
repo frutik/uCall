@@ -1,3 +1,7 @@
 psycopg2
 -e git+git://github.com/al-the-x/pyst.git#egg=asterisk
 -e svn+http://formunculous.svn.sourceforge.net/svnroot/formunculous/trunk@21#egg=formunculous
+pil
+mysql-python
+simplejson
+flup
