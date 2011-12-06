@@ -69,7 +69,8 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = '/usr/share/webapps/django/1.3/htdocs/'
+#STATIC_ROOT = '/usr/share/webapps/django/1.3/htdocs/'
+STATIC_ROOT = '/opt/ucall/web/ucall_backend/static/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -118,7 +119,7 @@ ROOT_URLCONF = 'ucall_backend.urls'
 
 #TODO buil system
 TEMPLATE_DIRS = (
-    '/opt/ucall/web/ucall_backend/templates',
+    'templates',
 )
 
 INSTALLED_APPS = (
