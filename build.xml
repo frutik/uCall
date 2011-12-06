@@ -1,0 +1,23 @@
+<project name="newsline" default="build" basedir=".">
+<target name="build">
+    <delete dir="build"/>
+    <copy todir="build">
+	<fileset dir="src"/>
+    </copy>
+    <replace
+            dir="./build"
+            value="value not found in .properties"
+            propertyFile="sample.properties">
+	    <replacefilter token="@db.backends@" property="db.backends" />
+	    <replacefilter token="@db.name@" property="db.name" />
+	    <replacefilter token="@db.user@" property="db.user" />
+	    <replacefilter token="@db.password@" property="db.password" />
+	    <replacefilter token="@db.host@" property="db.host" />
+	    <replacefilter token="@db.port@" property="db.port" />
+    </replace>
+    <copy todir=".">
+	<fileset dir="build"/>
+    </copy>
+    <delete dir="build"/>
+</target>
+</project>     
