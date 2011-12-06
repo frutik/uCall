@@ -6,7 +6,3 @@
     path = web/ui/vendors/probonogeek/extjs
     url = https://github.com/probonogeek/extjs.git
     ignore = untracked
-[submodule "web/ucall_backend/vendors/formunculous"]
-    path = web/ucall_backend/vendors/formunculous
-    url = git://github.com/rstets/formunculous.git
-    ignore = untracked
