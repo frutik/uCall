@@ -11,4 +11,4 @@ web/ui/vendors/kembuco/
 .pydevproject
 .idea
 etc/supervisord.conf
-web/ucall_backend/local-settings.py
+web/ucall_backend/local_settings.py

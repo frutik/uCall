@@ -171,3 +171,8 @@ CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
 #INSTALLED_APPS += ("djkombu", )
 
 BROKER_BACKEND = "djkombu.transport.DatabaseTransport"
+
+try:
+    from local_settings import *
+except ImportError:
+    pass

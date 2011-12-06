@@ -14,10 +14,23 @@
 	    <replacefilter token="@db.password@" property="db.password" />
 	    <replacefilter token="@db.host@" property="db.host" />
 	    <replacefilter token="@db.port@" property="db.port" />
+
+	    <replacefilter token="@supervisord.user@" property="supervisord.user" />
+	    <replacefilter token="@supervisord.password@" property="supervisord.password" />
     </replace>
     <copy todir=".">
 	<fileset dir="build"/>
     </copy>
     <delete dir="build"/>
+</target>
+<target name="update_submodules">
+    <exec executable="git">
+	<arg value="submodule"/>
+        <arg value="init"/>
+    </exec>
+    <exec executable="git">
+	<arg value="submodule"/>
+        <arg value="update"/>
+    </exec>
 </target>
 </project>     
