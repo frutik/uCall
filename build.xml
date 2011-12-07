@@ -40,6 +40,7 @@
 </target>
 <target name="prepare_archive">
     <delete file="/tmp/ucall.zip"/>
+    <delete file="*.pyc"/>
     <zip destfile="/tmp/ucall.zip"
 	basedir="."
 	excludes="src/** *.properties **/*.pyc **/.git **/.git/** **/.gitattributes **/.gitignore **/.gitmodules **.git/**" />
