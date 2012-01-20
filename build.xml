@@ -1,5 +1,6 @@
-<project name="newsline" default="build" basedir=".">
+<project name="newsline" default="all" basedir=".">
 <property name="build_dir" location="/tmp/ucall/"/>
+<target name="all" depends="prepare_3rd_parties,copy_source,fill_properties,prepare_archive"></target>
 <target name="copy_source">
     <delete dir="${build_dir}"/>
     <copy todir="${build_dir}">
@@ -7,8 +8,10 @@
 	    <exclude name="*.properties **/*.pyc **/.git **/.git/** **/.gitattributes **/.gitignore **/.gitmodules **.git/**"/>
 	</fileset>
     </copy>
-    <!-- replace
-            dir="./build"
+</target>
+<target name="fill_properties">
+    <replace
+            dir="${build_dir}"
             value="value not found in .properties"
             propertyFile="sample.properties">
 	    <replacefilter token="@db.backends@" property="db.backends" />
@@ -17,15 +20,9 @@
 	    <replacefilter token="@db.password@" property="db.password" />
 	    <replacefilter token="@db.host@" property="db.host" />
 	    <replacefilter token="@db.port@" property="db.port" />
-
-	    <replacefilter token="@supervisord.user@" property="supervisord.user" />
-	    <replacefilter token="@supervisord.password@" property="supervisord.password" />
-    </replace -->
-    <!-- copy todir=".">
-	<fileset dir="build"/>
-    </copy -->
+    </replace>
 </target>
-<target name="prepare_sources">
+<target name="prepare_3rd_parties">
     <exec executable="git">
 	<arg value="submodule"/>
         <arg value="init"/>
@@ -33,11 +30,6 @@
     <exec executable="git">
 	<arg value="submodule"/>
         <arg value="update"/>
-    </exec>
-    <exec executable="python">
-	<arg value="web/ucall_backend/manage.py"/>
-        <arg value="collectstatic"/>
-        <arg value="--noinput"/>
     </exec>
 </target>
 <target name="prepare_archive">
