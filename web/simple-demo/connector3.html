@@ -66,7 +66,7 @@
 
         var supported = ("WebSocket" in window);
         if(supported) {
-	    var client = Stomp.client('ws://queue.ucall.org:61614/stomp'); 
+	    var client = Stomp.client('ws://localhost:61614/stomp'); 
 	
 	    client.debug = function(str) {                                                                                                                                                              
 		$('#debug').append(str);                                                                                                                                                                           
@@ -112,11 +112,13 @@
     		$("#state").html('offline (<a href="connector2.html">reconnect</a>)');
 //    	    	client.connect('guest', 'password', connect_callback, error_callback);                                                                                                                                                           
     	    };                                                                                                                                                                                          
+              
                                                                                                                                                                                                                                                                                                                                                                                                                              
-    	    client.connect('guest', 'password', connect_callback, error_callback);                                                                                                                      
+//    	    client.connect('guest', 'guest', connect_callback, error_callback);                                                                                                                      
+    	    client.connect('guest', 'guest');                                                                                                                      
 	
     	    setInterval(function () {
-		client.send('/queue/ping', {priority:1, persistent:false}, agent);	
+	//	client.send('/queue/ping', {priority:1, persistent:false}, agent);	
     	    }, 15000);                                                                                                                                                                                                                                                                                                                                                                 	                 
 	}
 	

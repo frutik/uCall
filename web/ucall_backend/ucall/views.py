@@ -9,40 +9,6 @@ def main(request):
     return render_to_response('ucall/profile.html', {'user': request.user})
 
 @login_required()
-def config_stomp(request):
-    config = Config.objects.filter(section=u"stomp")
-    #TODO is it possible to gzip/cache???
-    return render_to_response('config/config.json', {'section': 'Stomp', 'config': config}, mimetype = 'text/javascript')
-
-@login_required()
-def config_app(request):
-    config = Config.objects.filter(section=u"app")
-    #TODO is it possible to gzip/cache???
-    return render_to_response('config/config.json', {'section': 'App', 'config': config}, mimetype = 'text/javascript')
-
-@login_required()
-def config_voip(request):
-    config = Config.objects.filter(section=u"voip")
-    #TODO is it possible to gzip/cache???
-    return render_to_response('config/config.json', {'section': 'Voip', 'config': config}, mimetype = 'text/javascript')
-
-@login_required()
-def config_current_user(request):
-    #TODO is it possible to gzip/cache???
-    return render_to_response('config/current_user.json', {'user': request.user}, mimetype = 'text/javascript')
-
-@login_required()
-def config_channel_event_schema(request):
-    #TODO is it possible to gzip/cache???
-    message = ChannelMessage()
-    return render_to_response('config/channel_event_schema.json', {'schema': message.dump_schema_json()}, mimetype = 'text/javascript')
-
-@login_required()
-def config_urls(request):
-    #TODO is it possible to gzip/cache???
-    return render_to_response('config/urls.json', {'user': request.user}, mimetype = 'text/javascript')
-
-@login_required()
 def profile_save(request):
     if 'firstname' in request.GET:
         message = 'Your data was succesfully stored.'

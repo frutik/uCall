@@ -54,7 +54,10 @@
 
         var supported = ("WebSocket" in window);
         if(supported) {
-	    var client = Stomp.client(queue); 
+        
+    	    alert(queue);
+        
+	    var client = Stomp.client(' ws://ucall.org:61614/stomp/'); 
 	
 	    client.debug = function(str) {                                                                                                                                                              
 		$('#debug').append(str);                                                                                                                                                                           
@@ -63,7 +66,7 @@
 	    var connect_callback = function() {                                                                                                                                                         
     		$("#state").html('online');
 
-    		client.subscribe('/queue/messages/' + agent, function(message) {
+    		client.subscribe('jms.queue.msg.' + agent, function(message) {
     		    ts = new Date(parseInt(message.headers.timestamp));
 		    // check if not outdated 
     
