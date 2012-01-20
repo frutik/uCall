@@ -1,10 +1,13 @@
 <project name="newsline" default="build" basedir=".">
-<target name="build">
-    <delete dir="build"/>
-    <copy todir="build">
-	<fileset dir="src"/>
+<property name="build_dir" location="/tmp/ucall/"/>
+<target name="copy_source">
+    <delete dir="${build_dir}"/>
+    <copy todir="${build_dir}">
+	<fileset dir=".">
+	    <exclude name="*.properties **/*.pyc **/.git **/.git/** **/.gitattributes **/.gitignore **/.gitmodules **.git/**"/>
+	</fileset>
     </copy>
-    <replace
+    <!-- replace
             dir="./build"
             value="value not found in .properties"
             propertyFile="sample.properties">
@@ -17,11 +20,10 @@
 
 	    <replacefilter token="@supervisord.user@" property="supervisord.user" />
 	    <replacefilter token="@supervisord.password@" property="supervisord.password" />
-    </replace>
-    <copy todir=".">
+    </replace -->
+    <!-- copy todir=".">
 	<fileset dir="build"/>
-    </copy>
-    <delete dir="build"/>
+    </copy -->
 </target>
 <target name="prepare_sources">
     <exec executable="git">
@@ -42,7 +44,7 @@
     <delete file="/tmp/ucall.zip"/>
     <delete file="*.pyc"/>
     <zip destfile="/tmp/ucall.zip"
-	basedir="."
+	basedir="${build_dir}"
 	excludes="src/** *.properties **/*.pyc **/.git **/.git/** **/.gitattributes **/.gitignore **/.gitmodules **.git/**" />
 </target>
 </project>     

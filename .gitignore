@@ -10,4 +10,3 @@ lighttpd*
 web/ui/vendors/kembuco/
 .pydevproject
 .idea
-web/ucall_backend/local_settings.py
