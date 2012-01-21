@@ -8,6 +8,7 @@
 	    <exclude name="*.properties **/*.pyc **/.git **/.git/** **/.gitattributes **/.gitignore **/.gitmodules **.git/**"/>
 	</fileset>
     </copy>
+    <delete dir="${build_dir}/.git"/>
 </target>
 <target name="fill_properties">
     <replace
