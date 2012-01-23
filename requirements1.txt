@@ -4,3 +4,5 @@ pil
 mysql-python
 simplejson
 flup
+stompy
+sqlobject
