@@ -125,6 +125,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'formunculous',
     'crm',
+    'simplecrm',
 )
 
 #INSTALLED_APPS += ("djcelery", )

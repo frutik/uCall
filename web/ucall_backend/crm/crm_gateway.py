@@ -1,11 +1,13 @@
 from crm.models import CrmCustomerNumber
 from crm.models import CrmAdapterOption
 from crm.adapters.vtiger import VtigerAdapter
+from crm.adapters.simplecrm import SimpleCrmAdapter
 import pprint
 
 class CrmGateway:
     VTIGER_CRM = 'VTiger'
     DJANGO_CRM = 'Django CRM'
+    SIMPLE_CRM = 'Simple CRM'
 
     def retrieveCrmAdapter(self, extention):
         #TODO: phone_number=extention fix it
@@ -27,8 +29,13 @@ class CrmGateway:
 
             return crm_adapter
 
+        elif type.title == self.SIMPLE_CRM:
+            crm_adapter = SimpleCrmAdapter(crm_adapter_parameters)
+
+            return crm_adapter
+
         elif type.title == self.DJANGO_CRM:
-            pass
+            raise Exception('CRM adapter not implemented')
 
         else:
-	        raise Exception('CRM adapter not found')
+	    raise Exception('CRM adapter not found')
