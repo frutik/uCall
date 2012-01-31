@@ -112,6 +112,9 @@ Ext.define('uCall.data.stomp.StompWebsocketClientAdapter', {
             return;
         }
 
+	//TODO Frutik disabled temporarely
+	return;
+
         // Send ping to queue
         this.performDataSend(this.pingMessage, this.ctrlChannel);
 
