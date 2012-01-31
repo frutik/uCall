@@ -21,12 +21,16 @@ def deploy():
     sudo('cd ' + web_dir + ' && unzip ' + work_tarball)
     sudo('rm -f ' + work_tarball)
     sudo('mv ' + web_dir + 'etc/supervisord.conf /etc/supervisor/conf.d/ucall.conf')
+
     #sudo('pip install -r ' + web_dir + 'requirements1.txt --upgrade')
     #sudo('pip install -r ' + web_dir + 'requirements2.txt --upgrade')
 
-    sleep(1)
-    sudo('/etc/init.d/supervisor start')
-    sleep(1)
+    #sleep(1)
+    #sudo('/etc/init.d/supervisor start')
+    #sleep(1)
+
+def restore_configs():
+    sudo('cp /opt/etc/config,ini ' + web_dir + 'etc/')
 
 def build(target_environment='staging'):
     local('ant all')
