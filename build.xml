@@ -21,6 +21,12 @@
 	    <replacefilter token="@db.password@" property="db.password" />
 	    <replacefilter token="@db.host@" property="db.host" />
 	    <replacefilter token="@db.port@" property="db.port" />
+	    <replacefilter token="@ami.host@" property="ami.host" />
+	    <replacefilter token="@ami.username@" property="ami.username" />
+	    <replacefilter token="@ami.password@" property="ami.password" />
+	    <replacefilter token="@stomp.host@" property="stomp.host" />
+	    <replacefilter token="@stomp.username@" property="stomp.username" />
+	    <replacefilter token="@stomp.password@" property="stomp.password" />
     </replace>
 </target>
 <target name="prepare_3rd_parties">
