@@ -47,9 +47,8 @@ Ext.define('uCall.App', {
             this.growlController = Ext.create('uCall.controllers.GrowlController');
             this.applicationWindowController = Ext.create('uCall.controllers.ApplicationWindowController');
 
-            /*
-             */
-            uCall.controllers.ChannelController.stompClientAdapter.performConnect();
+            //uCall.controllers.ChannelController.stompClientAdapter.performConnect();
+            uCall.controllers.ChannelController.connect();
         });
     }
 });

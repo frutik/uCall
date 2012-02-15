@@ -79,6 +79,14 @@ Ext.define('uCall.controllers.ChannelController', {
         }
     },
 
+    connect: function() {
+        if (this.stompClientAdapter.isConnected) {
+    	    console.log('ERROR. Already connected');
+	}
+	
+	this.stompClientAdapter.performConnect();    
+    },
+
     constructor: function(config) {
         // Parent
         this.callParent(arguments);
