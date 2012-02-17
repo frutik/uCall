@@ -2,7 +2,8 @@ from config.models import Config, AmiConfig, StompConfig, GeneralConfig
 from django.contrib import admin
 
 class ConfigAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('key', 'value')
+    list_filter = ('section',)
 
 class AmiConfigAdmin(admin.ModelAdmin):
     pass
