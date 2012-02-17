@@ -35,14 +35,6 @@ def main():
     app = Application()
     app.listen(options.port)
 
-	    <replacefilter token="guest" property="pika.username" />
-	    <replacefilter token="guest" property="pika.password" />
-	    <replacefilter token="127.0.0.1" property="pika.host" />
-	    <replacefilter token="5672" property="pika.port" />
-	    <replacefilter token="/" property="pika.virtual_host" />
-	    <replacefilter token="ucall222" property="pika.exchange_name" />
-
-
     pc = PikaClient(
         username = 'guest',
         password = 'guest',

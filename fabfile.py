@@ -12,7 +12,18 @@ web_dir = '/opt/ucall/'
 master_tarball = tmp_dir + tarball_filename
 work_tarball = web_dir + tarball_filename
 
-def deploy():
+def _deploy(cmd):
+    if not exists(web_dir):
+	cmd('mkdir ' + web_dir)
+
+    cmd('rm -rf ' + web_dir + '*')
+    cmd('cp ' + master_tarball + ' ' + work_tarball)
+    cmd('cd ' + web_dir + ' && unzip ' + work_tarball)
+    cmd('rm -f ' + work_tarball)
+    cmd('mv ' + web_dir + 'etc/supervisord.conf /etc/supervisor/conf.d/ucall.conf')
+    cmd('cd ' + web_dir + 'web/ucall_backend && python manage.py collectstatic')
+
+def deploy(cmd):
     if not exists(web_dir):
 	sudo('mkdir ' + web_dir)
 
@@ -22,23 +33,42 @@ def deploy():
     sudo('rm -f ' + work_tarball)
     sudo('mv ' + web_dir + 'etc/supervisord.conf /etc/supervisor/conf.d/ucall.conf')
 
-    #sudo('pip install -r ' + web_dir + 'requirements1.txt --upgrade')
-    #sudo('pip install -r ' + web_dir + 'requirements2.txt --upgrade')
+def local_deploy():
+    _deploy(local)
 
-    #sleep(1)
-    #sudo('/etc/init.d/supervisor start')
-    #sleep(1)
+def update_requirements(cmd):
+    cmd('pip install -r ' + web_dir + 'requirements1.txt --upgrade')
+    cmd('cd ' + web_dir + ' && pip install -r ' + web_dir + 'requirements2.txt --upgrade')
+
+def update_requirements_remote():
+    update_requirements(sudo)
+
+def update_requirements_local():
+    update_requirements(local)
 
 def restore_configs():
     sudo('cp /opt/etc/config,ini ' + web_dir + 'etc/')
 
-def build(target_environment='staging'):
-    local('ant all')
+def build_source():
+    local('ant prepare_3rd_parties copy_source fill_properties')
+
+def build_tarball():
+    local('ant prepare_archive')
     
 def upload_tarball():
     put(master_tarball, tmp_dir)
 
-def all(tagret_environment='staging'):
-    build(tagret_environment)
+def all():
+    build_source()
+    build_tarball()
     upload_tarball()
-    deploy()
+    deploy(sudo)
+    update_requirements_remote()
+    
+def local_all():
+    build_source()
+    build_tarball()
+    local_deploy()
+    update_requirements_local()
+    
+    

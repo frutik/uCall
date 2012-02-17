@@ -6,3 +6,5 @@ simplejson
 flup
 stompy
 sqlobject
+tornado
+pika
