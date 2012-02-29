@@ -9,24 +9,41 @@ class AgentChannelWebSocket(websocket.WebSocketHandler):
 
         self.queue_name = str(uuid.uuid1()) 
 
-        #self.application.pika.channel.queue_declare(exclusive=True, queue=self.queue_name, callback=self.on_queue_declared)
+    def parse_headers(self, headers_str):
+        """Parse headers received from the servers and convert
+        to a :class:`dict`.i
+
+        :param headers_str: String to parse headers from
+
+        """
+        # george:constanza\nelaine:benes
+        # -> {"george": "constanza", "elaine": "benes"}
+	
+	headers = {}
+	message_raw = headers_str.split("\n")
+	for line in message_raw[1:]:
+	    tokens = line.split(":")
+	    if len(tokens) == 2 and tokens[0]:
+		headers[tokens[0].strip()] = tokens[1].strip()
+
+	return headers
 
     def on_message(self, message):
         pika.log.info('PikaClient: WebSocket got message, TODO send it to somebody?')
 
         request = Frame()
         c = request.parse_command(message)
+	h = self.parse_headers(message)
         
         response = Frame()
         if c == 'CONNECT':
 	    response.build_frame({"command": 'CONNECTED', "headers": {}})
 	
 	elif c == 'SUBSCRIBE':
-    	    self.agent_id = 'SIP/101'
-
+    	    self.agent_id = str(h['destination'])
+    	    pika.log.info(self.agent_id)
     	    self.application.pika.channel.queue_declare(exclusive=True, queue=self.queue_name, callback=self.on_queue_declared)
-	    
-	    # TODO start rabbit stuff here, not in connect
+
 	    response.build_frame({"command": 'OK', "headers": {}})
 
 	elif c == 'UNSUBSCRIBE':
