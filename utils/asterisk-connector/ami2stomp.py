@@ -38,11 +38,13 @@ config.read('/opt/ucall/etc/config.ini')
 stomp_host = config.get('STOMP', 'host')
 stomp_username = config.get('STOMP', 'username')
 stomp_password = config.get('STOMP', 'password')
+stomp_exchange = config.get('STOMP', 'exchange')
 
 print '='*80
 print 'Stomp host:', stomp_host
 print 'Stomp username:', stomp_username
 print 'Stomp password:', stomp_password
+print 'Stomp exchange:', stomp_exchange
 print '='*80
 
 ami_host = config.get('AMI', 'host')
@@ -59,13 +61,18 @@ sql_dsn = config.get('SQL', 'dsn')
 print 'SQL:', sql_dsn
 print '='*80
 
-stomp = Client(stomp_host)
-stomp.connect(stomp_username, stomp_password)
-
-stomp.agent_channel = 'jms.queue.msg.'
-
 connection = connectionForURI(sql_dsn)
 sqlhub.processConnection = connection
+
+from queue_clients import RabbitMqClient as Client
+
+#stomp.agent_channel = 'jms.queue.msg.'
+queue_client = Client(
+    host=stomp_host,
+    username=stomp_username,
+    password=stomp_password,
+    exchange=stomp_exchange
+)
 
 manager = asterisk.manager.Manager()
 
@@ -73,7 +80,7 @@ manager = asterisk.manager.Manager()
 #try:
 manager.connect(ami_host)
 manager.login(ami_username, ami_password)
-manager.destination = stomp
+manager.destination = queue_client
 
 asteriskProtocolVersion = None
 if manager.version == '1.0':

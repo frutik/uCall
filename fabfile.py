@@ -23,7 +23,7 @@ def _deploy(cmd):
     cmd('mv ' + web_dir + 'etc/supervisord.conf /etc/supervisor/conf.d/ucall.conf')
     cmd('cd ' + web_dir + 'web/ucall_backend && python manage.py collectstatic')
 
-def deploy(cmd):
+def deploy():
     if not exists(web_dir):
 	sudo('mkdir ' + web_dir)
 
@@ -62,7 +62,7 @@ def all():
     build_source()
     build_tarball()
     upload_tarball()
-    deploy(sudo)
+    deploy()
     update_requirements_remote()
     
 def local_all():

@@ -35,11 +35,13 @@ config.read('/opt/ucall/etc/config.ini')
 stomp_host = config.get('STOMP', 'host')
 stomp_username = config.get('STOMP', 'username')
 stomp_password = config.get('STOMP', 'password')
+stomp_exchange = config.get('STOMP', 'exchange')
 
 print '='*80
 print 'Stomp host:', stomp_host
 print 'Stomp username:', stomp_username
 print 'Stomp password:', stomp_password
+print 'Stomp exchange:', stomp_exchange
 print '='*80
 
 sql_dsn = config.get('SQL', 'dsn')
@@ -47,18 +49,23 @@ sql_dsn = config.get('SQL', 'dsn')
 print 'SQL:', sql_dsn
 print '='*80
 
-stomp = Client(stomp_host)
-stomp.connect(stomp_username, stomp_password)
-
-stomp.agent_channel = 'jms.queue.msg.'
-
 connection = connectionForURI(sql_dsn)
 sqlhub.processConnection = connection
 
-timestamp_prev = None
+from queue_clients import RabbitMqClient as Client
+
+#stomp.agent_channel = 'jms.queue.msg.'
+queue_client = Client(
+    host=stomp_host,
+    username=stomp_username,
+    password=stomp_password,
+    exchange=stomp_exchange
+)
 
 manager = FakeAmiManager()
-manager.destination = stomp
+manager.destination = queue_client
+
+timestamp_prev = None
 
 asteriskProtocolVersion = None
 if manager.version == '1.0':
@@ -101,8 +108,8 @@ for line in csv_read:
     event = line[2]
     event_data = eval(line[4])
 
-    try:
-	message = callbacks[event](event_data, manager)
+    #try:
+    message = callbacks[event](event_data, manager)
 
 #    if message:
 #	print 'Event:', event
@@ -110,5 +117,5 @@ for line in csv_read:
 #	print 'Produced message:', message
 
 #	stomp.put(message, destination=stomp_queue)
-    except:
-	pass
+    #except:
+#	pass

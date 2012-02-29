@@ -27,6 +27,7 @@
 	    <replacefilter token="@stomp.host@" property="stomp.host" />
 	    <replacefilter token="@stomp.username@" property="stomp.username" />
 	    <replacefilter token="@stomp.password@" property="stomp.password" />
+	    <replacefilter token="@stomp.exchange@" property="stomp.exchange" />
     </replace>
 </target>
 <target name="prepare_3rd_parties">

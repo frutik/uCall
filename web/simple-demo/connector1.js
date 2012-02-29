@@ -55,9 +55,7 @@
         var supported = ("WebSocket" in window);
         if(supported) {
         
-    	    alert(queue);
-        
-	    var client = Stomp.client(' ws://ucall.org:61614/stomp/'); 
+	    var client = Stomp.client(queue); 
 	
 	    client.debug = function(str) {                                                                                                                                                              
 		$('#debug').append(str);                                                                                                                                                                           
@@ -65,6 +63,10 @@
 	
 	    var connect_callback = function() {                                                                                                                                                         
     		$("#state").html('online');
+		
+		//setInterval(function () {
+		//    client.send('/queue/ping', {priority:1, persistent:false}, agent);	
+    		//}, 15000);                                                                                                                                                                                                                                                                                                                                                                 	                 
 
     		client.subscribe('jms.queue.msg.' + agent, function(message) {
     		    ts = new Date(parseInt(message.headers.timestamp));
@@ -106,9 +108,6 @@
                                                                                                                                                                                                                                                                                                                                                                                                                              
     	    client.connect('guest', 'password', connect_callback, error_callback);                                                                                                                      
 	
-    	    setInterval(function () {
-		client.send('/queue/ping', {priority:1, persistent:false}, agent);	
-    	    }, 15000);                                                                                                                                                                                                                                                                                                                                                                 	                 
 	}
 	
 //	$("#dialog").html('<iframe frameborder="0" style="width:99%; height:93%;" src="1.html">');
