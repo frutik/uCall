@@ -4,11 +4,10 @@ import uuid
 from stompy.frame import Frame
 
 class AgentChannelWebSocket(websocket.WebSocketHandler):
-    def open(self, agent_id):
+    def open(self):
         pika.log.info('PikaClient: WebSocket opened, Declaring Queue')
 
         self.queue_name = str(uuid.uuid1()) 
-        self.agent_id = agent_id
 
         #self.application.pika.channel.queue_declare(exclusive=True, queue=self.queue_name, callback=self.on_queue_declared)
 
@@ -21,9 +20,17 @@ class AgentChannelWebSocket(websocket.WebSocketHandler):
         response = Frame()
         if c == 'CONNECT':
 	    response.build_frame({"command": 'CONNECTED', "headers": {}})
+	
 	elif c == 'SUBSCRIBE':
+    	    self.agent_id = 'SIP/101'
+
     	    self.application.pika.channel.queue_declare(exclusive=True, queue=self.queue_name, callback=self.on_queue_declared)
+	    
 	    # TODO start rabbit stuff here, not in connect
+	    response.build_frame({"command": 'OK', "headers": {}})
+
+	elif c == 'UNSUBSCRIBE':
+	    #TODO same as on_close() but not delete queueu????
 	    response.build_frame({"command": 'OK', "headers": {}})
 	    
         self.write_message(response.as_string())

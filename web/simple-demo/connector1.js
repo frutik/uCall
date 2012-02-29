@@ -50,7 +50,7 @@
 	    $.cookie('agent', agent);
 	}
     
-        agent = 'SIP/1001';
+        agent = 'SIP/101';
 
         var supported = ("WebSocket" in window);
         if(supported) {
@@ -68,7 +68,7 @@
 		//    client.send('/queue/ping', {priority:1, persistent:false}, agent);	
     		//}, 15000);                                                                                                                                                                                                                                                                                                                                                                 	                 
 
-    		client.subscribe('jms.queue.msg.' + agent, function(message) {
+    		client.subscribe('' + agent, function(message) {
     		    ts = new Date(parseInt(message.headers.timestamp));
 		    // check if not outdated 
     

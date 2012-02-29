@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import tornado.ioloop
 import tornado.web
 import tornado.websocket as websocket
@@ -37,7 +39,7 @@ rabbit_exchange = config.get('STOMP', 'exchange')
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
-            (r'/agent/([0-9]+)', AgentChannelWebSocket),
+            ('/agent/', AgentChannelWebSocket),
         ]
         tornado.web.Application.__init__(self, handlers, http_settings)
 
