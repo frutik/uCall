@@ -36,20 +36,17 @@ def deploy():
 def local_deploy():
     _deploy(local)
 
-def update_requirements(cmd):
-    cmd('pip install -r ' + web_dir + 'requirements1.txt --upgrade')
-    cmd('cd ' + web_dir + ' && pip install -r ' + web_dir + 'requirements2.txt --upgrade')
+def update_requirements():
+    sudo('pip install -r ' + web_dir + 'requirements1.txt --upgrade')
 
-def update_requirements_remote():
-    update_requirements(sudo)
-
-def update_requirements_local():
-    update_requirements(local)
+def update_src_requirements():
+    sudo('cd ' + web_dir + ' && pip install -r ' + web_dir + 'requirements2.txt --upgrade')
 
 def restore_configs():
     sudo('cp /opt/etc/config,ini ' + web_dir + 'etc/')
 
 def build_source():
+    sudo('rm -rf /tmp/ucall/')
     local('ant prepare_3rd_parties copy_source fill_properties')
 
 def build_tarball():
@@ -63,12 +60,10 @@ def all():
     build_tarball()
     upload_tarball()
     deploy()
-    update_requirements_remote()
+    update_requirements()
     
 def local_all():
     build_source()
-    build_tarball()
-    local_deploy()
-    update_requirements_local()
+    update_requirements()
     
     
