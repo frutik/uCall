@@ -5,35 +5,46 @@ from stomp import StompFrame
 
 class AgentChannelWebSocket(websocket.WebSocketHandler):
     def open(self):
-        pika.log.info('PikaClient: WebSocket opened, Declaring Queue')
+        pika.log.info('Websocket: Connection established')
 
         self.queue_name = str(uuid.uuid1()) 
 
     def on_message(self, message):
-        pika.log.info('PikaClient: WebSocket got message')
+        pika.log.info('Websocket: Got message from browser')
 
         request = StompFrame()
-        c = request.parse_command(message)
-        h = self.parse_headers(message)
-        
-        if c == 'CONNECT':
+        request.from_string(message)
+
+        pika.log.info('Websocket: Stomp ' + request.command)
+
+        if request.is_connect():
             response = StompFrame.connected()
 
-        elif c == 'SUBSCRIBE':
-            self.agent_id = str(h['destination'])
+        elif request.is_subscribe():
+            self.agent_id = '/'.join(request.get_header('destination').split('/')[1:])
             pika.log.info(self.agent_id)
             self.application.pika.channel.queue_declare(exclusive=True, queue=self.queue_name, callback=self.on_queue_declared)
 
             response = StompFrame.ok()
 
-        elif c == 'UNSUBSCRIBE':
+        elif request.is_unsubscribe():
             #TODO same as on_close() but not delete queueu????
             response = StompFrame.ok()
+
+        elif request.is_send():
+            pika.log.info('Websocket: Not implemented')
+            pika.log.debug(request.body)
+
+            response = StompFrame.ok()
+
+        else:
+            pika.log.info('Websocket: Unknown command')
+            response = StompFrame.error()
 
         self.write_message(response.as_string())
 
     def on_close(self):
-        pika.log.info('PikaClient: WebSocket closed, TODO cancel consumming stuff')
+        pika.log.info('Websocket: WebSocket closed, Canceling consumming stuff')
         
         self.application.pika.channel.queue_unbind(
             callback=self.on_queue_unbound,
@@ -62,7 +73,7 @@ class AgentChannelWebSocket(websocket.WebSocketHandler):
 
 
     def on_pika_message(self, channel, method, header, body):
-        pika.log.info('PikaCient: Message receive, delivery tag #%i' % method.delivery_tag)
+        pika.log.info('PikaCient: Got message from brocker, delivery tag #%i' % method.delivery_tag)
 
         response = StompFrame.message(body)
 

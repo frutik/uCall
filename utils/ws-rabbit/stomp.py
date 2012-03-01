@@ -1,5 +1,12 @@
 class StompFrame(object):
 
+    my_name = 'stomp-ucall-client'
+
+    def __init__(self):
+        self.headers = {}
+        self.body = None
+        self.command = None
+
     @staticmethod
     def ok():
         #TODO no such command - use empty message with weird byte
@@ -15,6 +22,18 @@ class StompFrame(object):
 
         f.build_frame({
             "command": 'CONNECTED',
+            "headers": {},
+            "body": None
+        })
+
+        return f
+
+    @staticmethod
+    def error():
+        f = StompFrame()
+
+        f.build_frame({
+            "command": 'ERROR',
             "headers": {},
             "body": None
         })
@@ -68,13 +87,18 @@ class StompFrame(object):
                                               want_receipt=True)
         """
         self.command = args.get('command')
-        self.headers = args.get('headers')
+        self.headers = args.get('headers', {})
         self.body = args.get('body')
         if want_receipt:
             receipt_stamp = str(random.randint(0, 10000000))
             self.headers["receipt"] = "%s-%s" % (
                     self.session.get("session"), receipt_stamp)
         return self
+
+    def from_string(self, string):
+        self.headers = self.parse_headers(string)
+        self.command = self.parse_command(string)
+        self.body = self.parse_body(string)
 
     def as_string(self):
         """Raw string representation of this frame
@@ -114,3 +138,21 @@ class StompFrame(object):
         """
         command = command_str.split('\n', 1)[0]
         return command
+
+    def parse_body(self, string):
+        return "\n\n".join(string.split("\n\n")[1:])
+
+    def get_header(self, name):
+        return str(self.headers[name])
+
+    def is_connect(self):
+        return self.command == 'CONNECT'
+
+    def is_subscribe(self):
+        return self.command == 'SUBSCRIBE'
+
+    def is_unsubscribe(self):
+        return self.command == 'UNSUBSCRIBE'
+
+    def is_send(self):
+        return self.command == 'SEND'
