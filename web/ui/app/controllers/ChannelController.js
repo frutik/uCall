@@ -48,7 +48,7 @@ Ext.define('uCall.controllers.ChannelController', {
         uCall.controllers.AgentStatusController.checkCurrentStatus();
     },
 
-    onMessage: function(eventData){
+    onMessage: function(eventData) {
         uCall.controllers.MessageController.handleMessage(eventData);
     },
 

@@ -19,53 +19,53 @@ Ext.define('uCall.controllers.MessageController', {
     },
 
     handleMessage: function(eventData) {
-
         var message = Ext.JSON.decode(eventData.message.data.body);
 
-        switch(message.t){
+        switch(message.t) {
             
             case this.mappedEvents.EVENT_RINGING:
-		that = this;
+		        that = this;
+
+                console.log('RINGING');
 
                 UserInfo.getUserInfo(message.c, message.e, function(crm_user_details) {
 
                     if (crm_user_details.success) {
-			message.content = 'User ' + crm_user_details.user + ' is waiting ... <br> Notes: ' + crm_user_details.title;
-		    } else {
-			message.content = 'User ' + message.c + ' is waiting ...';
-                	//message.content = value.msg;
-		    }
+			            message.content = 'User ' + crm_user_details.user + ' is waiting ... <br> Notes: ' + crm_user_details.title;
+		            } else {
+			            message.content = 'User ' + message.c + ' is waiting ...';
+                	    //message.content = value.msg;
+		            }
 
-		    that.fireMappedEvent(message);
-		});
+		            that.fireMappedEvent(message);
+		        });
 
                 break;
 
             case this.mappedEvents.EVENT_LINK:
 
-		this.fireMappedEvent(message); // show dialog
-		this.fireMappedEvent(message, this.mappedEvents.EVENT_HANGUP_CLEANUP); // hide growl
+		        this.fireMappedEvent(message); // show dialog
+		        this.fireMappedEvent(message, this.mappedEvents.EVENT_HANGUP_CLEANUP); // hide growl
 
                 break;
 
             default:
-		this.fireMappedEvent(message);
+                this.fireMappedEvent(message);
         }
     },
 
     fireMappedEvent: function(message, override_event_type) {
+        if (override_event_type) {
+	        event_type = override_event_type;
+        } else {
+            event_type = message.t;
+	    }
 	
-	if (override_event_type) {
-	    event_type = override_event_type;
-	} else {
-	    event_type = message.t;
-	}
-	
-	event = this.eventsMap[event_type];
+        event = this.eventsMap[event_type];
 
-	if (event) {
-    	    result = this.fireEvent(event, message);
-    	    console.log('Fired event ' + event + ' - ' + result);
+        if (event) {
+            result = this.fireEvent(event, message);
+            console.log('Fired event ' + event + ' - ' + result);
         }
     },
 
