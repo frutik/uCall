@@ -41,6 +41,7 @@ def update_requirements():
 
 def update_src_requirements():
     sudo('cd ' + web_dir + ' && pip install -r ' + web_dir + 'requirements2.txt --upgrade')
+    sudo('cd ' + web_dir + 'web/ucall_backend/ && python manage.py collectstatic')
 
 def restore_configs():
     sudo('cp /opt/etc/config,ini ' + web_dir + 'etc/')
@@ -64,6 +65,6 @@ def all():
     
 def local_all():
     build_source()
-    update_requirements()
+    update_src_requirements()
     
     
