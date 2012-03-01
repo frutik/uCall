@@ -22,7 +22,7 @@ class AgentChannelWebSocket(websocket.WebSocketHandler):
 
         elif request.is_subscribe():
             self.agent_id = '/'.join(request.get_header('destination').split('/')[1:])
-            pika.log.info(self.agent_id)
+            pika.log.debug(self.agent_id)
             self.application.pika.channel.queue_declare(exclusive=True, queue=self.queue_name, callback=self.on_queue_declared)
 
             response = StompFrame.ok()
