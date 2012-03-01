@@ -41,13 +41,13 @@ class StompFrame(object):
         return f
 
     @staticmethod
-    def message(message):
+    def message(message=None, headers={}):
     #        assert command
         f = StompFrame()
 
         f.build_frame({
             "command": 'MESSAGE',
-            "headers": {},
+            "headers": headers,
             "body": message
         })
 

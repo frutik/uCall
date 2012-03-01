@@ -9,6 +9,9 @@ class AgentChannelWebSocket(websocket.WebSocketHandler):
 
         self.queue_name = str(uuid.uuid1()) 
 
+        self.agent_id = None
+        self.subscription_id = None
+
     def on_message(self, message):
         pika.log.info('Websocket: Got message from browser')
 
@@ -21,7 +24,10 @@ class AgentChannelWebSocket(websocket.WebSocketHandler):
             response = StompFrame.connected()
 
         elif request.is_subscribe():
+
             self.agent_id = '/'.join(request.get_header('destination').split('/')[1:])
+            self.subscription_id = request.get_header('id')
+
             pika.log.debug(self.agent_id)
             self.application.pika.channel.queue_declare(exclusive=True, queue=self.queue_name, callback=self.on_queue_declared)
 
@@ -75,6 +81,9 @@ class AgentChannelWebSocket(websocket.WebSocketHandler):
     def on_pika_message(self, channel, method, header, body):
         pika.log.info('PikaCient: Got message from brocker, delivery tag #%i' % method.delivery_tag)
 
-        response = StompFrame.message(body)
+        response = StompFrame.message(
+            message=body,
+            headers = {'subscription': self.subscription_id}
+        )
 
         self.write_message(response.as_string())
