@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.INFO)
 
 import pika
 from pika_client import PikaClient
-from agent_channel_ws import AgentChannelWebSocket
+from stomp_ws_channel import StompWebSocketChannel
 
 import ConfigParser
 
@@ -39,7 +39,7 @@ rabbit_exchange = config.get('STOMP', 'exchange')
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
-            ('/', AgentChannelWebSocket),
+            ('/stomp/', StompWebSocketChannel),
         ]
         tornado.web.Application.__init__(self, handlers, http_settings)
 

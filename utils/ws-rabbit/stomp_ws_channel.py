@@ -3,7 +3,7 @@ import pika
 import uuid
 from stomp import StompFrame
 
-class AgentChannelWebSocket(websocket.WebSocketHandler):
+class StompWebSocketChannel(websocket.WebSocketHandler):
     def open(self):
         pika.log.info('Websocket: Connection established')
 
