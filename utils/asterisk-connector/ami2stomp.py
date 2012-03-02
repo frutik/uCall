@@ -33,7 +33,7 @@ except IOError:
     sys.exit(-1)
 
 config = ConfigParser.ConfigParser()
-config.read('/opt/ucall/etc/config.ini')
+config.read('/etc/ucall/config.ini')
 
 stomp_host = config.get('STOMP', 'host')
 stomp_username = config.get('STOMP', 'username')
