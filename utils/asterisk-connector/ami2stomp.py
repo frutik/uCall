@@ -22,6 +22,19 @@ from handlers.command_constants import Protocol
 #                    filename='/tmp/myapp.log',
 #                    filemode='a+')
 
+
+class MessageController(object):
+
+    def start_ringing(self):
+        pass
+
+    def stop_ringing(self):
+        pass
+
+    def link(self):
+        pass
+
+
 import fcntl
 lockfile = os.path.normpath('/tmp/' + os.path.basename(__file__) + '.lock')
 exclusive_lock = open(lockfile, 'w')
@@ -90,18 +103,14 @@ elif manager.version == '1.1':
 else:
     sys.exit()
 
-command_handler = CommandHandlerFactory(asteriskProtocolVersion).create_command_handler()
+#command_handler = CommandHandlerFactory.create_command_handler_by_protocol(asteriskProtocolVersion)
+command_handler = CommandHandlerFactory.create_command_handler_by_key(Protocol.QUEUE_1_6)
 
-manager.register_event('Shutdown', command_handler.handle_Shutdown)
-manager.register_event('Hangup', command_handler.handle_Hangup)
-manager.register_event('Link', command_handler.handle_Link)
-manager.register_event('Bridge', command_handler.handle_Bridge)
-manager.register_event('Dial', command_handler.handle_Dial)
-manager.register_event('Newstate', command_handler.handle_Newstate)
-manager.register_event('QueueMemberAdded', command_handler.handle_QueueMemberAdded)
-manager.register_event('QueueMemberRemoved', command_handler.handle_QueueMemberRemoved)
-manager.register_event('QueueMemberPaused', command_handler.handle_QueueMemberPaused)
-manager.register_event('QueueMember', command_handler.handle_QueueMember)
+print type(command_handler)
+
+for command in command_handler.get_commands():
+    print 'Binding', command
+    manager.register_event(command, getattr(command_handler, 'handle_' + command))
 
 manager.message_loop()
 

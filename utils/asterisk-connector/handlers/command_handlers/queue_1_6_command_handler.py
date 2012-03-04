@@ -1,15 +1,15 @@
 from asterisk_event import AsteriskEvent
 from asterisk_command_handler import AsteriskCommandHandler
-from command_constants import Asterisk10
+from command_constants import Asterisk11
 from channel.channel_message import ChannelMessage
+
 
 from handler_utils import check_event
 from handler_utils import send_message
 from handler_utils import get_local_number
 
 
-class Asterisk10CommandHandler(AsteriskCommandHandler):
-    """Concrete command handler for Asterisk Call Manager/1.0 protocol"""
+class Queue16CommandHandler(AsteriskCommandHandler):
 
     def get_commands(self):
         return ['Shutdown',
@@ -27,32 +27,55 @@ class Asterisk10CommandHandler(AsteriskCommandHandler):
     @check_event
     def handle_Dial(self, event, manager):
         """
-        {'CallerID': '1133', 'SrcUniqueID': '1306919118.7245', 'Destination': 'SIP/214-19bceeb0', 'DestUniqueID': '1306919118.7246', 'Source': 'SIP/1133-19ba80e0', 'CallerIDName': 'tamila', 'Privilege': 'call,all', 'Event': 'Dial'}
+        Event: Dial
+        Privilege: call,all
+        SubEvent: Begin
+        Channel: SIP/104-000000d4
+        Destination: SIP/104-000000d5
+        CallerIDNum: 104
+        CallerIDName: 104
+        UniqueID: 1309518189.212
+        DestUniqueID: 1309518189.213
+        Dialstring: 104
         """
 
-        AsteriskEvent(event = event[Asterisk10.HEADER_EVENT], raw = str(event), uniqueid = event[Asterisk10.HEADER_DESTUNIQUEID])
+        if event[Asterisk11.HEADER_SUBEVENT] == Asterisk11.SUBEVENT_BEGIN:
+            AsteriskEvent(event = event[Asterisk11.HEADER_EVENT], raw = str(event), uniqueid = event[Asterisk11.HEADER_DESTUNIQUEID])
 
     @check_event
-    def handle_Link(self, event, manager):
+    def handle_Bridge(self, event, manager):
         """
-        {'Uniqueid2': '1306914758.6999', 'Uniqueid1': '1306914726.6994', 'Channel1': 'SIP/430913-19be0080', 'Channel2': 'SIP/1313-19ba26d0', 'CallerID2': '380352407040', 'Privilege': 'call,all', 'CallerID1': '430913', 'Event': 'Link'}
+        Event: Bridge
+        Privilege: call,all
+        Bridgestate: Link
+        Bridgetype: core
+        Channel1: SIP/101-00000058
+        Channel2: SIP/104-00000059
+        Uniqueid1: 1309443548.88
+        Uniqueid2: 1309443548.89
+        CallerID1: 101
+        CallerID2: 104
+
+        {'Uniqueid2': '1309506586.133', 'Uniqueid1': '1309506586.132', 'CallerID2': '104', 'Bridgestate': 'Link', 'CallerID1': '101', 'Channel2': 'SIP/104-00000085', 'Channel1': 'SIP/101-00000084', 'Bridgetype': 'core', 'Privilege': 'call,all', 'Event': 'Bridge'}
+
         """
 
         message = ChannelMessage()
 
         message.set_event(ChannelMessage.EVENT_LINK)
-        message.set_id(event[Asterisk10.HEADER_UNIQUEID1])
-        message.set_extension(event[Asterisk10.HEADER_CALLERID1])
-        message.set_caller(event[Asterisk10.HEADER_CALLERID2])
+        message.set_id(event[Asterisk11.HEADER_UNIQUEID2])
+        message.set_extension(event[Asterisk11.HEADER_CALLERID2])
+        message.set_caller(event[Asterisk11.HEADER_CALLERID1])
 
-        send_message(manager.destination, message.dump_data_json(), get_local_number(event[Asterisk10.HEADER_CHANNEL1]))
+        send_message(manager.destination, message.dump_data_json(), get_local_number(event[Asterisk11.HEADER_CHANNEL2]))
 
     def handle_Shutdown(self, event, manager):
         print AsteriskCommandHandler.SHUTDOWN_MESSAGE
         manager.close()
 
     def _handle_newstate_ringing(self, event, destination):
-        channel = event[Asterisk10.HEADER_CHANNEL]
+        print "handle_newstate_ringing"
+        channel = event[Asterisk11.HEADER_CHANNEL]
 
         if channel == None:
             return None
@@ -60,11 +83,12 @@ class Asterisk10CommandHandler(AsteriskCommandHandler):
         message = ChannelMessage()
 
         message.set_event(ChannelMessage.EVENT_RINGING)
-        message.set_id(event[Asterisk10.HEADER_UNIQUEID])
+        message.set_id(event[Asterisk11.HEADER_UNIQUEID])
 
         try:
-            parent_event = AsteriskEvent.selectBy(event = Asterisk10.EVENT_DIAL, uniqueid = event[Asterisk10.HEADER_UNIQUEID])[0]
+            parent_event = AsteriskEvent.selectBy(event = Asterisk11.EVENT_DIAL, uniqueid = event[Asterisk11.HEADER_UNIQUEID])[0]
         except Exception as e:
+            print e
             parent_event = None
 
         if parent_event != None:
@@ -73,11 +97,11 @@ class Asterisk10CommandHandler(AsteriskCommandHandler):
             raw = None
 
         if raw != None:
-            caller = raw[Asterisk10.HEADER_CALLERID]
+            caller = raw[Asterisk11.HEADER_CALLERIDNUM]
+            extension = event[Asterisk11.HEADER_CALLERIDNUM]
         else:
             caller = AsteriskCommandHandler.CALLERID_UNKNOWN
-
-        extension = event[Asterisk10.HEADER_CALLERID]
+            extension = AsteriskCommandHandler.CALLERID_UNKNOWN
 
         message.set_extension(extension)
         message.set_caller(caller)
@@ -85,7 +109,8 @@ class Asterisk10CommandHandler(AsteriskCommandHandler):
         send_message(destination, message.dump_data_json(), get_local_number(channel))
 
     def _handle_hangup_clearing(self, event, destination):
-        channel = event[Asterisk10.HEADER_CHANNEL]
+        print "handle_hangup_clearing"
+        channel = event[Asterisk11.HEADER_CHANNEL]
 
         if channel == None:
             return None
@@ -93,9 +118,10 @@ class Asterisk10CommandHandler(AsteriskCommandHandler):
         message = ChannelMessage()
 
         message.set_event(ChannelMessage.EVENT_HANGUP_CLEANUP)
-        message.set_id(event[Asterisk10.HEADER_UNIQUEID])
+        message.set_id(event[Asterisk11.HEADER_UNIQUEID])
 
         send_message(destination, message.dump_data_json(), get_local_number(channel))
+
 
     def _is_hangup_clearing(self, event):
         # TODO: Ignore hangup cause for now
@@ -105,7 +131,7 @@ class Asterisk10CommandHandler(AsteriskCommandHandler):
         # return False
 
     def _is_newstate_ringing(self, event):
-        if event[Asterisk10.HEADER_STATE] == Asterisk10.STATE_RINGING:
+        if event[Asterisk11.HEADER_CHANNEL_STATE_DESC] == Asterisk11.STATE_RINGING:
             return True
 
         return False

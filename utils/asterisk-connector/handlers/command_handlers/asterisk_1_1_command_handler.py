@@ -12,6 +12,19 @@ from handler_utils import get_local_number
 class Asterisk11CommandHandler(AsteriskCommandHandler):
     """Concrete command handler for Asterisk Call Manager/1.1 protocol"""
 
+    def get_commands(self):
+        return ['Shutdown',
+                'Hangup',
+                'Link',
+                'Bridge',
+                'Dial',
+                'Newstate',
+                'QueueMemberAdded',
+                'QueueMemberRemoved',
+                'QueueMemberPaused',
+                'QueueMember',
+        ]
+
     @check_event
     def handle_Dial(self, event, manager):
         """

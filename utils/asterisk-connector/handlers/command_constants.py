@@ -1,8 +1,15 @@
+
 class Protocol:
     """Command protocol constants"""
-    
+
+    QUEUE_1_6 = 'q16'
+
     ASTERISK_1_0 = "Asterisk Call Manager/1.0"
     ASTERISK_1_1 = "Asterisk Call Manager/1.1"
+
+    @staticmethod
+    def versions():
+        return [Protocol.ASTERISK_1_0, Protocol.ASTERISK_1_1]
 
 class Asterisk:
     HEADER_CAUSE = "Cause-txt"

@@ -14,6 +14,10 @@ class AsteriskCommandHandler(CommandHandler):
     PAUSED_FLAG = 1
 
     @abc.abstractmethod
+    def get_commands(self):
+        pass
+
+    @abc.abstractmethod
     def _handle_newstate_ringing(self, event, destination):
         pass
 
