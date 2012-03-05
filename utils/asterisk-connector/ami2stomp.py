@@ -77,6 +77,12 @@ print '='*80
 connection = connectionForURI(sql_dsn)
 sqlhub.processConnection = connection
 
+try:
+    AsteriskEvent.createTable()
+
+except:
+    pass
+
 from queue_clients import RabbitMqClient as Client
 
 #stomp.agent_channel = 'jms.queue.msg.'

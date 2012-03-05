@@ -14,33 +14,60 @@ class Queue16CommandHandler(AsteriskCommandHandler):
     def get_commands(self):
         return ['Shutdown',
                 'Hangup',
-                'Link',
-                'Bridge',
-                'Dial',
-                'Newstate',
                 'QueueMemberAdded',
                 'QueueMemberRemoved',
                 'QueueMemberPaused',
                 'QueueMember',
+
+                'Newchannel',
+                'Newstate',
+                'Join',
+                'Bridge',
         ]
 
-    @check_event
-    def handle_Dial(self, event, manager):
-        """
-        Event: Dial
-        Privilege: call,all
-        SubEvent: Begin
-        Channel: SIP/104-000000d4
-        Destination: SIP/104-000000d5
-        CallerIDNum: 104
-        CallerIDName: 104
-        UniqueID: 1309518189.212
-        DestUniqueID: 1309518189.213
-        Dialstring: 104
-        """
+#    Join {'Count': '1', 'ConnectedLineNum': 'unknown', 'CallerIDNum': '102', 'Queue': 'test_te', 'ConnectedLineName': 'unknown', 'Uniqueid': '1330721579.24', 'CallerIDName': 'unknown', 'Privilege': 'call,all', 'Position': '1', 'Event': 'Join', 'Channel': 'SIP/102-00000018'}
+#    Bridge {'Uniqueid2': '1330721579.25', 'Uniqueid1': '1330721579.24', 'CallerID2': '', 'Bridgestate': 'Link', 'CallerID1': '102', 'Channel2': 'SIP/101-00000019', 'Channel1': 'SIP/102-00000018', 'Bridgetype': 'core', 'Privilege': 'call,all', 'Event': 'Bridge'}
 
-        if event[Asterisk11.HEADER_SUBEVENT] == Asterisk11.SUBEVENT_BEGIN:
-            AsteriskEvent(event = event[Asterisk11.HEADER_EVENT], raw = str(event), uniqueid = event[Asterisk11.HEADER_DESTUNIQUEID])
+
+#    @check_event
+#    def handle_Dial(self, event, manager):
+#        """
+#        Event: Dial
+#        Privilege: call,all
+#        SubEvent: Begin
+#        Channel: SIP/104-000000d4
+#        Destination: SIP/104-000000d5
+#        CallerIDNum: 104
+#        CallerIDName: 104
+#        UniqueID: 1309518189.212
+#        DestUniqueID: 1309518189.213
+#        Dialstring: 104
+#        """
+#
+#        if event[Asterisk11.HEADER_SUBEVENT] == Asterisk11.SUBEVENT_BEGIN:
+#            AsteriskEvent(event = event[Asterisk11.HEADER_EVENT], raw = str(event), uniqueid = event[Asterisk11.HEADER_DESTUNIQUEID])
+
+    @check_event
+    def handle_Newchannel(self, event, manager):
+#        found new caller. we know exten here. store to db
+#        Newchannel {'AccountCode': '', 'Uniqueid': '1330721579.24', 'ChannelState': '0', 'Exten': '555', 'CallerIDNum': '102', 'Context': 'default', 'CallerIDName': '', 'Privilege': 'call,all', 'Event': 'Newchannel', 'Channel': 'SIP/102-00000018', 'ChannelStateDesc': 'Down'}
+
+        AsteriskEvent(
+            event = event[Asterisk11.HEADER_EVENT],
+            raw = str(event),
+            uniqueid = event[Asterisk11.HEADER_UNIQUEID]
+        )
+
+    @check_event
+    def handle_Join(self, event, manager):
+#        caller joined queue. we know queue name here. store to db
+#        Join {'Count': '1', 'ConnectedLineNum': 'unknown', 'CallerIDNum': '102', 'Queue': 'test_te', 'ConnectedLineName': 'unknown', 'Uniqueid': '1330721579.24', 'CallerIDName': 'unknown', 'Privilege': 'call,all', 'Position': '1', 'Event': 'Join', 'Channel': 'SIP/102-00000018'}
+
+        AsteriskEvent(
+            event = event[Asterisk11.HEADER_EVENT],
+            raw = str(event),
+            uniqueid = event[Asterisk11.HEADER_UNIQUEID]
+        )
 
     @check_event
     def handle_Bridge(self, event, manager):
@@ -74,7 +101,18 @@ class Queue16CommandHandler(AsteriskCommandHandler):
         manager.close()
 
     def _handle_newstate_ringing(self, event, destination):
-        print "handle_newstate_ringing"
+        #Newstate {
+        # 'ConnectedLineNum': '102',
+        # 'ChannelState': '5',
+        # 'CallerIDNum': '',
+        # 'ConnectedLineName': '',
+        # 'Uniqueid': '1330721579.25',
+        # 'CallerIDName': '',
+        # 'Privilege': 'call,all',
+        # 'Event': 'Newstate',
+        # 'Channel': 'SIP/101-00000019',
+        # 'ChannelStateDesc': 'Ringing'}
+
         channel = event[Asterisk11.HEADER_CHANNEL]
 
         if channel == None:
@@ -84,43 +122,47 @@ class Queue16CommandHandler(AsteriskCommandHandler):
 
         message.set_event(ChannelMessage.EVENT_RINGING)
         message.set_id(event[Asterisk11.HEADER_UNIQUEID])
+#
+#        try:
+#            parent_event = AsteriskEvent.selectBy(event = Asterisk11.EVENT_DIAL, uniqueid = event[Asterisk11.HEADER_UNIQUEID])[0]
+#        except Exception as e:
+#            print e
+#            parent_event = None
+#
+#        if parent_event != None:
+#            raw = eval(parent_event.raw)
+#        else:
+#            raw = None
+#
+#        if raw != None:
+#            caller = raw[Asterisk11.HEADER_CALLERIDNUM]
+#            extension = event[Asterisk11.HEADER_CALLERIDNUM]
+#        else:
+#            caller = AsteriskCommandHandler.CALLERID_UNKNOWN
+#            extension = AsteriskCommandHandler.CALLERID_UNKNOWN
+#
+#        message.set_extension(extension)
+#        message.set_caller(caller)
 
-        try:
-            parent_event = AsteriskEvent.selectBy(event = Asterisk11.EVENT_DIAL, uniqueid = event[Asterisk11.HEADER_UNIQUEID])[0]
-        except Exception as e:
-            print e
-            parent_event = None
-
-        if parent_event != None:
-            raw = eval(parent_event.raw)
-        else:
-            raw = None
-
-        if raw != None:
-            caller = raw[Asterisk11.HEADER_CALLERIDNUM]
-            extension = event[Asterisk11.HEADER_CALLERIDNUM]
-        else:
-            caller = AsteriskCommandHandler.CALLERID_UNKNOWN
-            extension = AsteriskCommandHandler.CALLERID_UNKNOWN
-
-        message.set_extension(extension)
-        message.set_caller(caller)
+#        queue name??? or extension???
+#        caller number???
 
         send_message(destination, message.dump_data_json(), get_local_number(channel))
 
     def _handle_hangup_clearing(self, event, destination):
-        print "handle_hangup_clearing"
-        channel = event[Asterisk11.HEADER_CHANNEL]
-
-        if channel == None:
-            return None
-
-        message = ChannelMessage()
-
-        message.set_event(ChannelMessage.EVENT_HANGUP_CLEANUP)
-        message.set_id(event[Asterisk11.HEADER_UNIQUEID])
-
-        send_message(destination, message.dump_data_json(), get_local_number(channel))
+        pass
+#        print "handle_hangup_clearing"
+#        channel = event[Asterisk11.HEADER_CHANNEL]
+#
+#        if channel == None:
+#            return None
+#
+#        message = ChannelMessage()
+#
+#        message.set_event(ChannelMessage.EVENT_HANGUP_CLEANUP)
+#        message.set_id(event[Asterisk11.HEADER_UNIQUEID])
+#
+#        send_message(destination, message.dump_data_json(), get_local_number(channel))
 
 
     def _is_hangup_clearing(self, event):
