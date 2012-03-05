@@ -8,18 +8,11 @@ from handler_utils import check_event
 from handler_utils import send_message
 from handler_utils import get_local_number
 
-
 class Queue16CommandHandler(AsteriskCommandHandler):
 
     def get_commands(self):
-        return ['Shutdown',
-                'Hangup',
-                'QueueMemberAdded',
-                'QueueMemberRemoved',
-                'QueueMemberPaused',
-                'QueueMember',
-
-                'Newchannel',
+        common = super(Queue16CommandHandler, self).get_commands()
+        return common + ['Newchannel',
                 'Newstate',
                 'Join',
                 'Bridge',
@@ -27,25 +20,6 @@ class Queue16CommandHandler(AsteriskCommandHandler):
 
 #    Join {'Count': '1', 'ConnectedLineNum': 'unknown', 'CallerIDNum': '102', 'Queue': 'test_te', 'ConnectedLineName': 'unknown', 'Uniqueid': '1330721579.24', 'CallerIDName': 'unknown', 'Privilege': 'call,all', 'Position': '1', 'Event': 'Join', 'Channel': 'SIP/102-00000018'}
 #    Bridge {'Uniqueid2': '1330721579.25', 'Uniqueid1': '1330721579.24', 'CallerID2': '', 'Bridgestate': 'Link', 'CallerID1': '102', 'Channel2': 'SIP/101-00000019', 'Channel1': 'SIP/102-00000018', 'Bridgetype': 'core', 'Privilege': 'call,all', 'Event': 'Bridge'}
-
-
-#    @check_event
-#    def handle_Dial(self, event, manager):
-#        """
-#        Event: Dial
-#        Privilege: call,all
-#        SubEvent: Begin
-#        Channel: SIP/104-000000d4
-#        Destination: SIP/104-000000d5
-#        CallerIDNum: 104
-#        CallerIDName: 104
-#        UniqueID: 1309518189.212
-#        DestUniqueID: 1309518189.213
-#        Dialstring: 104
-#        """
-#
-#        if event[Asterisk11.HEADER_SUBEVENT] == Asterisk11.SUBEVENT_BEGIN:
-#            AsteriskEvent(event = event[Asterisk11.HEADER_EVENT], raw = str(event), uniqueid = event[Asterisk11.HEADER_DESTUNIQUEID])
 
     @check_event
     def handle_Newchannel(self, event, manager):

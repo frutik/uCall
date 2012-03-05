@@ -13,16 +13,11 @@ class Asterisk11CommandHandler(AsteriskCommandHandler):
     """Concrete command handler for Asterisk Call Manager/1.1 protocol"""
 
     def get_commands(self):
-        return ['Shutdown',
-                'Hangup',
-                'Link',
+        common = super(Asterisk11CommandHandler, self).get_commands()
+        return common + ['Link',
                 'Bridge',
                 'Dial',
                 'Newstate',
-                'QueueMemberAdded',
-                'QueueMemberRemoved',
-                'QueueMemberPaused',
-                'QueueMember',
         ]
 
     @check_event
